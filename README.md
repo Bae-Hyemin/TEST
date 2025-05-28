@@ -1,44 +1,81 @@
 # TEST
 외국인전담팀 TEST입니다.
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>사번 조회</title>
-  <meta charset="UTF-8">
   <style>
-    body { font-family: Arial, sans-serif; margin: 30px; }
-    input, button { padding: 10px; font-size: 16px; }
-    #result { margin-top: 20px; padding: 10px; background: #f3f3f3; border-radius: 5px; }
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 1rem;
+    }
+    input, button {
+      padding: 8px;
+      font-size: 16px;
+      margin-right: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
-  <h2>사번 조회 시스템</h2>
-  <input type="text" id="sabunInput" placeholder="사번 입력" />
-  <button onclick="search()">조회</button>
+  <h2>사번으로 데이터 조회</h2>
+  <input type="text" id="employeeId" placeholder="사번 입력" />
+  <button onclick="searchData()">조회</button>
   <div id="result"></div>
 
   <script>
-    async function search() {
-      const sabun = document.getElementById("sabunInput").value.trim();
-      const url = "https://script.google.com/macros/s/여기에_복사한_웹앱_URL/exec?sabun=" + sabun;
-      
-      try {
-        const response = await fetch(url);
-        const text = await response.text();
-        let content;
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwYBb1BquiWZPuLlYSn8UI0pmDPMbPfgnpTvDAGOyD8TlWKOkmvzitO7VvzEgJeaROw/exec'; // ← 여기에 본인의 Apps Script Web App URL을 넣으세요
 
-        try {
-          const json = JSON.parse(text);
-          content = Object.entries(json)
-            .map(([key, value]) => `<b>${key}:</b> ${value}`)
-            .join("<br>");
-        } catch {
-          content = `<span style="color:red">${text}</span>`;
+    async function searchData() {
+      const empId = document.getElementById('employeeId').value.trim();
+      if (!empId) {
+        alert("사번을 입력하세요.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${scriptUrl}?id=${encodeURIComponent(empId)}`);
+        const data = await response.json();
+
+        if (data.length === 0) {
+          document.getElementById('result').innerHTML = `<p>해당 사번의 데이터를 찾을 수 없습니다.</p>`;
+          return;
         }
 
-        document.getElementById("result").innerHTML = content;
-      } catch (err) {
-        document.getElementById("result").innerHTML = "오류 발생: " + err;
+        // 표 생성
+        let table = `<table><thead><tr>`;
+        Object.keys(data[0]).forEach(key => {
+          table += `<th>${key}</th>`;
+        });
+        table += `</tr></thead><tbody>`;
+
+        data.forEach(row => {
+          table += `<tr>`;
+          Object.values(row).forEach(value => {
+            table += `<td>${value}</td>`;
+          });
+          table += `</tr>`;
+        });
+
+        table += `</tbody></table>`;
+        document.getElementById('result').innerHTML = table;
+
+      } catch (error) {
+        console.error(error);
+        document.getElementById('result').innerHTML = `<p>데이터를 불러오지 못했습니다.</p>`;
       }
     }
   </script>
