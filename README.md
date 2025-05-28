@@ -37,7 +37,7 @@
   <div id="result"></div>
 
   <script>
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbzk62DBdmGqrq6OUC2bPid2Vm4a7ymRVslI777muCfSJpUJ_-v1qNKJLGTE--mu76w/exec'; // ← 여기에 본인의 Apps Script Web App URL을 넣으세요
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbyoZBwxnc5enY7hlj4YnWMbxuUvRRBcoL1pcZk9xhzd03sbkBtHQHmQVTzNW2HVaMuk/exec'; // ← 여기에 본인의 Apps Script Web App URL을 넣으세요
 
     async function searchData() {
       const empId = document.getElementById('employeeId').value.trim();
